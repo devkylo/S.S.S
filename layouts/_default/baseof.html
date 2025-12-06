@@ -2,7 +2,7 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8">
-    <title>{{ block "title" . }}Status List - 주요 서비스 상태 페이지{{ end }}</title>
+    <title>{{ block "title" . }}Service Status Search - 서비스 상태 검색 페이지{{ end }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,9 +29,10 @@
         font-size: 1.5rem; margin-bottom: 24px; color: #1e293b;
         display: flex; align-items: center; gap: 12px;
       }
-      .grid {
+        .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        /* 기존: repeat(auto-fit, minmax(280px, 1fr)); */
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 16px;
       }
       .btn {
