@@ -7,7 +7,7 @@ services:
         url: "https://www.cloudflarestatus.com/"
       - name: "AWS (아마존 클라우드)"
         url: "https://health.aws.amazon.com/health/status"
-      - name: "Microsoft m65 (마이크로소프트 엠365)"
+      - name: "Microsoft 365 (마이크로소프트 엠365)"
         url: "https://status.cloud.microsoft/m365/"
       - name: "Microsoft Azure (마이크로소프트 애저)"
         url: "https://azure.status.microsoft/ko-kr/status"
@@ -67,3 +67,4 @@ services:
         url: "https://suivi-des-incidents.orange.fr/infos-incident-local-internet-TV-telephone-fixe"
       - name: "Maxis Broadband (말레이시아)"
         url: "https://www.maxis.com.my/en/about-maxis/maxis-network/mobile-network-checker/"
+
