@@ -59,13 +59,12 @@ services:
         url: "https://www.att.com/outages/"
       - name: "Verizon Wireless (미국)"
         url: "https://www.verizon.com/support/check-network-status/"
-      - name: "Globe Telecom (필리핀)"
-        url: "https://downdetector.ph/status/globe/"
       - name: "SingTel Optus Pty Limited (호주)"
         url: "https://www.optus.com.au/living-network/service-status"
       - name: "Orange (프랑스)"
         url: "https://suivi-des-incidents.orange.fr/infos-incident-local-internet-TV-telephone-fixe"
       - name: "Maxis Broadband (말레이시아)"
         url: "https://www.maxis.com.my/en/about-maxis/maxis-network/mobile-network-checker/"
+
 
 
