@@ -19,6 +19,7 @@ services:
         url: "https://www.cloudflarestatus.com/"
       - name: "📺 Netflix (넷플릭스)"
         url: "https://help.netflix.com/ko/is-netflix-down"
+
   - group: "🇰🇷 국내 주요 서비스"
     items:
       - name: "💬 Kakao (카카오 - 개발자용)"
@@ -27,6 +28,7 @@ services:
         url: "https://status.tosspayments.com/"
       - name: "☁️ Naver Cloud (네이버 클라우드)"
         url: "https://www.ncloud.com/support/notice"
+
   - group: "📱 주요 로밍 서비스"
     items:
       - name: "📱 Verizon (미국)"
