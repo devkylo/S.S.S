@@ -32,7 +32,8 @@ services:
       - name: "Zoom (줌)"
         url: "https://status.zoom.us"
       - name: "Starlink (스타링크 비공식)"
-        url: "https://starlinkstatus.space/"  
+        url: "https://starlinkstatus.space/"
+
   - group: "국내 주요 서비스"
     items:
       - name: "Toss Payments (토스 페이먼츠)"
@@ -49,6 +50,7 @@ services:
         url: "https://www.ncloud.com/support/notice"
       - name: "Naver API (네이버 API)"
         url: "https://developers.naver.com/notice/apistatus/"
+
   - group: "주요 로밍 서비스"
     items:
       - name: "T-Mobile (미국)"
@@ -63,6 +65,5 @@ services:
         url: "https://www.optus.com.au/living-network/service-status"
       - name: "Orange (프랑스)"
         url: "https://suivi-des-incidents.orange.fr/infos-incident-local-internet-TV-telephone-fixe"
-	  - name: "Maxis Broadband Sdn. Bhd. (말레이시아)"
+      - name: "Maxis Broadband (말레이시아)"
         url: "https://www.maxis.com.my/en/about-maxis/maxis-network/mobile-network-checker/"
-
