@@ -38,6 +38,8 @@ services:
     items:
       - name: "Toss Payments (토스 페이먼츠)"
         url: "https://status.tosspayments.com/"
+      - name: "Samsung Members (삼성멤버스 커뮤니티)"
+        url: "https://r1.community.samsung.com/t5/%EC%BB%A4%EB%AE%A4%EB%8B%88%ED%8B%B0/ct-p/kr-community?page=1&tab=recent_topics"
       - name: "Naver Pay (네이버페이 공지사항)"
         url: "https://pay.naver.com/member/notice/"
       - name: "KakaoPay (카카오페이 공지사항)"
@@ -65,6 +67,7 @@ services:
         url: "https://suivi-des-incidents.orange.fr/infos-incident-local-internet-TV-telephone-fixe"
       - name: "Maxis Broadband (말레이시아)"
         url: "https://www.maxis.com.my/en/about-maxis/maxis-network/mobile-network-checker/"
+
 
 
 
