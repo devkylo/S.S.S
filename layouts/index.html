@@ -230,4 +230,187 @@
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, min
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  /* 7. 서비스 카드 스타일 */
+  .service-card {
+    display: flex;
+    text-decoration: none;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary);
+  }
+
+  .card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .service-name {
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 1.05rem;
+  }
+
+  .external-icon {
+    color: #cbd5e1;
+    transition: color 0.2s;
+  }
+
+  .service-card:hover .external-icon {
+    color: var(--primary);
+  }
+
+  /* 8. 기타 및 유틸리티 */
+  .no-results {
+    grid-column: 1 / -1;
+    padding: 60px 20px;
+    text-align: center;
+    background: white;
+    border-radius: var(--radius);
+    border: 2px dashed var(--border);
+    color: var(--text-sub);
+  }
+
+  .footer {
+    margin-top: 60px;
+    text-align: center;
+    color: var(--text-sub);
+    font-size: 0.9rem;
+  }
+</style>
+
+<script>
+  const TAB_ACTIVE_CLASS = "tab-active";
+
+  function getTabs() { return Array.from(document.querySelectorAll(".tab-btn")); }
+  function getGroups() { return Array.from(document.querySelectorAll(".group")); }
+  
+  // 그룹 활성화/비활성화
+  function setActiveGroupById(id) {
+    const groups = getGroups();
+    groups.forEach(g => {
+      if (g.id === id) {
+        g.dataset.active = "true";
+        g.style.display = "block";
+      } else {
+        g.dataset.active = "false";
+        g.style.display = "none";
+      }
+    });
+  }
+
+  function getActiveGroup() {
+    return getGroups().find(g => g.dataset.active === "true");
+  }
+
+  // 검색 초기화
+  function resetButtons(group) {
+    if (!group) return;
+    const cards = group.querySelectorAll(".service-card");
+    cards.forEach(card => card.style.display = "flex");
+    const msg = group.querySelector(".no-results");
+    if (msg) msg.remove();
+  }
+
+  function getFirstGroupId() {
+    const tabs = getTabs();
+    return tabs.length ? tabs[0].getAttribute("data-target") : null;
+  }
+
+  // 초기 로드
+  function initTabs() {
+    const tabs = getTabs();
+    const firstGroupId = getFirstGroupId();
+    if (!tabs.length || !firstGroupId) return;
+
+    // 모든 탭 비활성화 후 첫번째 활성화
+    tabs.forEach(t => t.classList.remove(TAB_ACTIVE_CLASS));
+    tabs[0].classList.add(TAB_ACTIVE_CLASS);
+
+    setActiveGroupById(firstGroupId);
+    resetButtons(document.getElementById(firstGroupId));
+
+    const search = document.getElementById("search");
+    if (search) search.value = "";
+  }
+
+  // 탭 클릭 핸들러
+  function activateTab(btn) {
+    const targetId = btn.getAttribute("data-target");
+    const tabs = getTabs();
+
+    tabs.forEach(t => t.classList.remove(TAB_ACTIVE_CLASS));
+    btn.classList.add(TAB_ACTIVE_CLASS);
+
+    setActiveGroupById(targetId);
+    resetButtons(document.getElementById(targetId)); // 탭 이동 시 필터 초기화
+
+    const search = document.getElementById("search");
+    if (search) search.value = "";
+  }
+
+  // 필터링 (카드 구조 변경에 맞게 수정됨)
+  function filterServices() {
+    const input = document.getElementById("search");
+    const query = input.value.toLowerCase();
+    
+    let activeGroup = getActiveGroup();
+    // 안전장치: 활성 그룹이 없으면 첫번째 그룹 선택
+    if (!activeGroup) {
+        const groups = getGroups();
+        if(groups.length > 0) activeGroup = groups[0];
+        else return;
+    }
+
+    // 검색어 없으면 리셋
+    if (!query.trim()) {
+      resetButtons(activeGroup);
+      return;
+    }
+
+    const oldMsg = activeGroup.querySelector(".no-results");
+    if (oldMsg) oldMsg.remove();
+
+    const cards = activeGroup.querySelectorAll(".service-card");
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      // 카드 내부 텍스트 전체 검색
+      const text = card.textContent.toLowerCase();
+      const match = text.includes(query);
+      card.style.display = match ? "flex" : "none";
+      if (match) visibleCount++;
+    });
+
+    if (visibleCount === 0) {
+      const grid = activeGroup.querySelector(".grid");
+      if (!grid) return;
+
+      const noResults = document.createElement("div");
+      noResults.className = "no-results";
+      noResults.innerHTML = `
+        <p style="font-size:1.2rem; font-weight:bold; margin-bottom:8px;">검색 결과가 없습니다 😢</p>
+        <p style="font-size:0.9rem;">"${input.value}"에 대한 결과를 찾지 못했습니다.</p>
+      `;
+      grid.appendChild(noResults);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", initTabs);
+</script>
+{{ end }}
