@@ -1,212 +1,233 @@
 {{ define "main" }}
-<div class="container">
-  <h1>Service Status Search</h1>
-  <p class="subtitle">서비스 상태 검색 페이지</p>
+<div class="page-wrapper">
+  <div class="container">
+    <header class="header">
+      <h1 class="title">Service Status Search</h1>
+      <p class="subtitle">실시간 서비스 상태를 확인하세요</p>
+    </header>
 
-  <div class="search">
-    <input
-      type="text"
-      id="search"
-      placeholder="서비스 검색"
-      oninput="filterServices()">
-  </div>
+    <div class="search-container">
+      <div class="search-box">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input
+          type="text"
+          id="search"
+          placeholder="서비스 이름 검색..."
+          oninput="filterServices()"
+          autocomplete="off">
+      </div>
+    </div>
 
-  <!-- 탭 버튼 -->
-  <div class="tabs">
-    {{ range $i, $g := .Site.Data.services.services }}
-      <button
-        class="tab-btn"
-        data-target="group-{{ $g.group | urlize }}"
-        onclick="activateTab(this)">
-        {{ $g.group }}
-      </button>
-    {{ end }}
-  </div>
-
-  <!-- 그룹 섹션 -->
-  {{ range .Site.Data.services.services }}
-    <section class="group" id="group-{{ .group | urlize }}">
-      <h2>{{ .group }}</h2>
-      <div class="grid">
-        {{ range .items }}
-          <a class="btn" href="{{ .url }}" target="_blank" rel="noopener">
-            {{ .name }}
-          </a>
+    <div class="tabs-wrapper">
+      <div class="tabs">
+        {{ range $i, $g := .Site.Data.services.services }}
+          <button
+            class="tab-btn"
+            data-target="group-{{ $g.group | urlize }}"
+            onclick="activateTab(this)">
+            {{ $g.group }}
+          </button>
         {{ end }}
       </div>
-    </section>
-  {{ end }}
+    </div>
 
-  <div class="footer">
-    💡 각 버튼을 클릭하면 새 탭에서 상태 페이지가 열립니다.
+    <main class="content-area">
+      {{ range .Site.Data.services.services }}
+        <section class="group" id="group-{{ .group | urlize }}">
+          <div class="group-header">
+            <h2>{{ .group }}</h2>
+            <span class="badge">{{ len .items }} Services</span>
+          </div>
+          
+          <div class="grid">
+            {{ range .items }}
+              <a class="service-card" href="{{ .url }}" target="_blank" rel="noopener">
+                <div class="card-content">
+                  <span class="service-name">{{ .name }}</span>
+                  <svg class="external-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </div>
+              </a>
+            {{ end }}
+          </div>
+        </section>
+      {{ end }}
+    </main>
+
+    <div class="footer">
+      <p>💡 카드를 클릭하면 해당 서비스의 상태 페이지가 새 탭에서 열립니다.</p>
+    </div>
   </div>
 </div>
 
-<script>
-  const TAB_ACTIVE_CLASS = "tab-active";
-
-  function getTabs() {
-    return Array.from(document.querySelectorAll(".tab-btn"));
-  }
-
-  function getGroups() {
-    return Array.from(document.querySelectorAll(".group"));
-  }
-
-  function setActiveGroupById(id) {
-    const groups = getGroups();
-    groups.forEach(g => {
-      if (g.id === id) {
-        g.dataset.active = "true";
-        g.style.display = "block";
-      } else {
-        g.dataset.active = "false";
-        g.style.display = "none";
-      }
-    });
-  }
-
-  function getActiveGroup() {
-    return getGroups().find(g => g.dataset.active === "true");
-  }
-
-  function resetButtons(group) {
-    if (!group) return;
-    const buttons = group.querySelectorAll(".btn");
-    buttons.forEach(btn => {
-      btn.style.display = "flex";
-    });
-    const msg = group.querySelector(".no-results");
-    if (msg) msg.remove();
-  }
-
-  function getFirstGroupId() {
-    const tabs = getTabs();
-    if (!tabs.length) return null;
-    return tabs[0].getAttribute("data-target");
-  }
-
-  // 초기 상태: 첫 번째 탭 + 그 섹션만 보이게
-  function initTabs() {
-    const tabs = getTabs();
-    const groups = getGroups();
-    const firstGroupId = getFirstGroupId();
-    if (!tabs.length || !groups.length || !firstGroupId) return;
-
-    const firstTab = tabs[0];
-
-    tabs.forEach(t => t.classList.remove(TAB_ACTIVE_CLASS));
-    firstTab.classList.add(TAB_ACTIVE_CLASS);
-
-    setActiveGroupById(firstGroupId);
-    resetButtons(document.getElementById(firstGroupId));
-
-    const search = document.getElementById("search");
-    if (search) search.value = "";
-  }
-
-  // 탭 클릭: 해당 섹션만 보이도록
-  function activateTab(btn) {
-    const targetId = btn.getAttribute("data-target");
-    const tabs = getTabs();
-
-    tabs.forEach(t => t.classList.remove(TAB_ACTIVE_CLASS));
-    btn.classList.add(TAB_ACTIVE_CLASS);
-
-    setActiveGroupById(targetId);
-    resetButtons(document.getElementById(targetId));
-
-    const search = document.getElementById("search");
-    if (search) search.value = "";
-  }
-
-  // 검색: 현재 활성 그룹에서만 필터, 결과 없으면 메시지
-  function filterServices() {
-    const input = document.getElementById("search");
-    const query = input.value.toLowerCase();
-
-    let activeGroup = getActiveGroup();
-    if (!activeGroup) {
-      // 혹시 data-active가 안 맞아 있으면 첫 번째 그룹 강제 활성화
-      const groups = getGroups();
-      if (!groups.length) return;
-      activeGroup = groups[0];
-      activeGroup.dataset.active = "true";
-      activeGroup.style.display = "block";
-    }
-
-    // 검색어 비었으면: 현재 탭 섹션 유지 + 버튼/메시지만 초기화
-    if (!query.trim()) {
-      resetButtons(activeGroup);
-      return;
-    }
-
-    // 이전 메시지 제거
-    const oldMsg = activeGroup.querySelector(".no-results");
-    if (oldMsg) oldMsg.remove();
-
-    const buttons = activeGroup.querySelectorAll(".btn");
-    let visibleCount = 0;
-
-    buttons.forEach(btn => {
-      const text = btn.textContent.toLowerCase();
-      const match = text.includes(query);
-      btn.style.display = match ? "flex" : "none";
-      if (match) visibleCount++;
-    });
-
-    // 결과 0개면 "검색 항목이 없습니다" 추가
-    if (visibleCount === 0) {
-      const grid = activeGroup.querySelector(".grid");
-      if (!grid) return;
-
-      const noResults = document.createElement("div");
-      noResults.className = "no-results";
-      noResults.textContent = "검색 항목이 없습니다.";
-      noResults.style.cssText = `
-        grid-column: 1 / -1;
-        padding: 40px 20px;
-        text-align: center;
-        color: #6b7280;
-        font-size: 16px;
-        border: 2px dashed #d1d5db;
-        border-radius: 8px;
-        background: #f9fafb;
-      `;
-      grid.appendChild(noResults);
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", initTabs);
-</script>
-
 <style>
+  /* 1. 기본 설정 및 변수 */
+  :root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-color: #f8fafc;
+    --text-main: #1e293b;
+    --text-sub: #64748b;
+    --border: #e2e8f0;
+    --card-bg: #ffffff;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+    --radius: 12px;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-main);
+    margin: 0;
+  }
+
+  /* 2. 레이아웃 */
+  .page-wrapper {
+    min-height: 100vh;
+    padding: 40px 20px;
+    box-sizing: border-box;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* 3. 헤더 */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.025em;
+    background: linear-gradient(135deg, #1e293b 0%, #4f46e5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    color: var(--text-sub);
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  /* 4. 검색창 */
+  .search-container {
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+  }
+
+  .search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 16px;
+    width: 20px;
+    height: 20px;
+    color: var(--text-sub);
+  }
+
+  #search {
+    width: 100%;
+    padding: 16px 16px 16px 50px;
+    font-size: 16px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: white;
+    box-shadow: var(--shadow-md);
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  #search:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+  }
+
+  /* 5. 탭 네비게이션 */
+  .tabs-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+
   .tabs {
-    display:flex;
-    gap:8px;
-    margin-bottom:24px;
-    flex-wrap:wrap;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 6px;
+    background: white;
+    border-radius: 999px;
+    box-shadow: var(--shadow-sm);
+    justify-content: center;
   }
 
   .tab-btn {
-    padding:8px 14px;
-    border-radius:999px;
-    border:1px solid #cbd5f5;
-    background:#e5edff;
-    color:#1e293b;
-    font-size:14px;
-    cursor:pointer;
+    padding: 8px 20px;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: var(--text-sub);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tab-btn:hover {
+    color: var(--primary);
+    background: #f1f5f9;
   }
 
   .tab-btn.tab-active {
-    background:#4f46e5;
-    color:#ffffff;
-    border-color:#4338ca;
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.3);
   }
 
-  /* 검색 결과 없음 메시지 그리드 정렬 */
-  .group .no-results {
-    grid-column: 1 / -1;
+  /* 6. 그룹 및 카드 그리드 */
+  .group {
+    display: none; /* JS로 제어 */
+    animation: fadeIn 0.3s ease-out;
   }
-</style>
-{{ end }}
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .group-header h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: var(--text-main);
+  }
+
+  .badge {
+    background: #e0e7ff;
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, min
